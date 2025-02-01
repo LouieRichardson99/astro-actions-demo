@@ -1,11 +1,40 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import { actions } from 'astro:actions';
 import Layout from '../layouts/Layout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const result = Astro.getActionResult(actions.submitForm);
 ---
 
 <Layout>
-	<Welcome />
+  <h1>Astro Actions 👨🏻‍🚀</h1>
+  <form method="POST" action={actions.submitForm}>
+    <label>
+      Name:
+      <input type="text" name="name" required />
+    </label>
+    <label>
+      Email Address:
+      <input type="email" name="email" required />
+    </label>
+    <label>
+      Message:
+      <textarea name="message" required></textarea>
+    </label>
+    <button type="submit">Submit</button>
+  </form>
+  {
+    result && (
+      <p class={`${(result.error && 'text-red-600') || 'text-green-600'}`}>
+        {result.data?.message || result.error?.message}
+      </p>
+    )
+  }
 </Layout>
+
+<script define:vars={{ result }} is:inline>
+  if (result && !result.error) {
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 3000);
+  }
+</script>
